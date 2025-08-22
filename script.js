@@ -1,63 +1,40 @@
 // ===== CONFIG =====
 const CONFIG = {
-  githubUser: 'Bismay-exe',                 // your username
-  githubRepo: 'heavenly-epub-reader',       // URL-safe repo name
+  githubUser: 'Bismay-exe',
+  githubRepo: 'Heavenly-EPUB-Reader',
   epubsFolder: 'epubs',
   coversFolder: 'covers',
-  backgroundsFolder: 'backgrounds',
-  manifestFile: 'library.json'              // fallback JSON
+  manifestFile: 'library.json'
 };
 
 // ===== DOM =====
 const themeToggle = document.getElementById('theme-toggle');
 const homeBtn = document.getElementById('home-btn');
-const librarySection = document.getElementById('library');
-const recentSection = document.getElementById('recent');
-const recentGrid = document.getElementById('recent-grid');
-const finishedSection = document.getElementById('finished');
-const finishedGrid = document.getElementById('finished-grid');
-const continueSection = document.getElementById('continue');
-const continueContainer = document.getElementById('continue-container');
-
 const bookGrid = document.getElementById('book-grid');
 const readerLayout = document.getElementById('reader-layout');
 const viewer = document.getElementById('viewer');
-const viewerWrap = document.getElementById('viewer-wrap');
 const tocList = document.getElementById('toc-list');
-const tocFilter = document.getElementById('toc-filter');
-const chapterSearch = document.getElementById('chapter-search');
-
-const fontSizeSelect = document.getElementById('font-size');
 const prevBtn = document.getElementById('prev-ch');
 const nextBtn = document.getElementById('next-ch');
-const textColorPicker = document.getElementById('text-color');
-const bgStyleSelect = document.getElementById('bg-style');
-const readingModeSelect = document.getElementById('reading-mode');
-const readerOnlyEls = document.querySelectorAll('.reader-only');
+const chapterSearch = document.getElementById('chapter-search');
 
 const infoBtn = document.getElementById('info-btn');
 const infoModal = document.getElementById('info-modal');
-const bookMetaDiv = document.getElementById('book-meta');
-
 const shortcutsBtn = document.getElementById('shortcuts-btn');
 const shortcutsModal = document.getElementById('shortcuts-modal');
-
 const settingsBtn = document.getElementById('settings-btn');
 const settingsModal = document.getElementById('settings-modal');
-
 const creditsBtn = document.getElementById('credits-btn');
 const creditsModal = document.getElementById('credits-modal');
 const closeModalButtons = document.querySelectorAll('.close-modal');
 
-const finishBtn = document.getElementById('finish-btn');
+const readerOnlyEls = document.querySelectorAll('.reader-only');
 
 // ===== STATE =====
 let book = null;
 let rendition = null;
-let spine = [];
 let toc = [];
-let currentSpineIndex = 0;
-let currentCoverUrl = null;
+let currentLocation = null;
 
 // ===== UTIL =====
 function persist(key, val){ try { localStorage.setItem(key, val); } catch {} }
@@ -71,36 +48,28 @@ async function firstReachable(urls){
   return null;
 }
 
-// ===== THEME & INIT =====
-themeToggle?.addEventListener('click', () => {
-  document.body.classList.toggle('dark');
-  themeToggle.textContent = document.body.classList.contains('dark') ? "☀️ Light Mode" : "🌙 Dark Mode";
-  applyRenditionTheme();
-  persist('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-});
-
+// ===== THEME INIT =====
 window.addEventListener('load', () => {
-  const savedTheme = read('theme') || read('defaultTheme');
+  const savedTheme = read('theme');
   if (savedTheme === 'dark') {
     document.body.classList.add('dark');
-    if (themeToggle) themeToggle.textContent = "☀️ Light Mode";
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    themeToggle.textContent = "🌙 Dark Mode";
   }
-  const defaultMode = read('defaultReadingMode');
-  if (defaultMode && readingModeSelect) readingModeSelect.value = defaultMode;
-  const defaultFont = read('defaultFontSize');
-  if (defaultFont && fontSizeSelect) fontSizeSelect.value = defaultFont;
-
   init();
 });
 
-homeBtn?.addEventListener('click', showLibrary);
+themeToggle?.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  themeToggle.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+  persist('theme', isDark ? 'dark' : 'light');
+});
 
+// ===== INIT =====
 async function init(){
   await loadLibrary();
-  loadGithubBackgrounds();
-  loadRecent();
-  loadFinished();
-  loadContinue();
 }
 
 // ===== LIBRARY LOADER =====
@@ -108,7 +77,6 @@ async function loadLibrary(){
   bookGrid.innerHTML = '<p class="muted">Loading library…</p>';
   let items = [];
 
-  // Try GitHub API
   try {
     const apiUrl = `https://api.github.com/repos/${CONFIG.githubUser}/${CONFIG.githubRepo}/contents/${CONFIG.epubsFolder}`;
     const res = await fetch(apiUrl);
@@ -118,98 +86,115 @@ async function loadLibrary(){
                  .map(f => ({ 
                    title: beautifyName(f.name.replace(/\.epub$/i,'')), 
                    file: f.name, 
-                   cover: null, 
-                   path: f.download_url 
+                   path: `https://raw.githubusercontent.com/${CONFIG.githubUser}/${CONFIG.githubRepo}/main/${CONFIG.epubsFolder}/${f.name}`
                  }));
   } catch (err) {
     console.warn("GitHub API failed, using manifest:", err);
     try {
       const res = await fetch(CONFIG.manifestFile);
-      if (res.ok) {
-        const manifest = await res.json();
-        items = manifest.books || manifest;  // support both formats
-      }
+      if (res.ok) items = await res.json();
     } catch(e){ console.error("Library manifest error:", e); }
-  }
-
-  if(!items.length){
-    bookGrid.innerHTML = `<p class="muted">No books found. Add .epub files to <code>/${CONFIG.epubsFolder}</code> and matching cover images to <code>/${CONFIG.coversFolder}</code>.</p>`;
-    return;
   }
 
   bookGrid.innerHTML = '';
   for (const it of items){
-    const base = (it.file || it.name).replace(/\.epub$/i,'');
+    const base = it.file.replace(/\.epub$/i,'');
     const coverCandidates = [
-      it.cover ? `${CONFIG.coversFolder}/${it.cover}` : null,
-      `https://raw.githubusercontent.com/${CONFIG.githubUser}/${CONFIG.githubRepo}/main/${CONFIG.coversFolder}/${base}.jpg`,
-      `https://raw.githubusercontent.com/${CONFIG.githubUser}/${CONFIG.githubRepo}/main/${CONFIG.coversFolder}/${base}.png`,
       `${CONFIG.coversFolder}/${base}.jpg`,
       `${CONFIG.coversFolder}/${base}.png`,
       'assets/placeholder.png'
-    ].filter(Boolean);
-
+    ];
     const cover = await firstReachable(coverCandidates) || 'assets/placeholder.png';
     const card = document.createElement('div');
     card.className = 'card';
-    card.innerHTML = `
-      <img src="${cover}" alt="${base} cover">
-      <div class="title">${it.title || beautifyName(base)}</div>
-    `;
+    card.innerHTML = `<img src="${cover}" alt="${base} cover"><div class="title">${it.title}</div>`;
     card.addEventListener('click', () => {
-      let url = it.path;
-      if (!url) {
-        url = `${CONFIG.epubsFolder}/${it.file}`;
-      }
-      if (!/^(http|https):\/\//i.test(url)){
-        url = `https://raw.githubusercontent.com/${CONFIG.githubUser}/${CONFIG.githubRepo}/main/${url}`;
-      }
-      persist('lastBookURL', url);
-      currentCoverUrl = cover;
-      openBook(url, { cover, cfi: null });
+      openBook(it.path);
     });
     bookGrid.appendChild(card);
   }
 }
 
-// ===== BACKGROUNDS =====
-const bgGallery = document.getElementById('bg-gallery');
-async function loadGithubBackgrounds() {
-  const user = CONFIG.githubUser;
-  const repo = CONFIG.githubRepo;
-  const folder = CONFIG.backgroundsFolder;
-  const fallbackBg = 'backgrounds/bg.jpg';
-  try {
-    const apiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${folder}`;
-    const res = await fetch(apiUrl);
-    if(!res.ok) throw new Error('GitHub API error');
-    const files = await res.json();
-    let loadedAny = false;
-    files.forEach(file => {
-      if(file.type === "file" && /\.(jpg|jpeg|png|webp)$/i.test(file.name)){
-        const img = document.createElement('img');
-        img.src = file.download_url;
-        img.className = 'bg-thumb';
-        img.alt = file.name;
-        img.addEventListener('click', () => {
-          document.body.style.background = `url('${img.src}') no-repeat center center fixed`;
-          document.body.style.backgroundSize = 'cover';
-          persist('bgImage', img.src);
-        });
-        bgGallery.appendChild(img);
-        loadedAny = true;
-      }
+// ===== OPEN BOOK =====
+async function openBook(url){
+  book = ePub(url);
+  rendition = book.renderTo("viewer", {
+    width: "100%",
+    height: "100%",
+    flow: "scrolled"
+  });
+  rendition.display();
+
+  // Show reader UI
+  document.getElementById('library').classList.add('hidden');
+  readerLayout.classList.remove('hidden');
+  readerOnlyEls.forEach(el => el.classList.remove('hidden'));
+  infoBtn.classList.remove('hidden');
+
+  // Load TOC
+  const navigation = await book.loaded.navigation;
+  toc = navigation.toc;
+  renderTOC();
+
+  // Update location tracking
+  rendition.on("relocated", (location) => {
+    currentLocation = location;
+  });
+}
+
+// ===== TOC =====
+function renderTOC(){
+  tocList.innerHTML = '';
+  toc.forEach(item => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.textContent = item.label;
+    a.href = "#";
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      rendition.display(item.href);
     });
-    if(!loadedAny) setFallbackBackground(fallbackBg);
-  } catch (err) {
-    const savedBg = read('bgImage');
-    if (savedBg) setFallbackBackground(savedBg); else setFallbackBackground(fallbackBg);
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+}
+
+// ===== CHAPTER NAV =====
+prevBtn?.addEventListener('click', () => rendition.prev());
+nextBtn?.addEventListener('click', () => rendition.next());
+chapterSearch?.addEventListener('input', () => {
+  const val = chapterSearch.value.toLowerCase();
+  Array.from(tocList.children).forEach(li => {
+    li.style.display = li.textContent.toLowerCase().includes(val) ? '' : 'none';
+  });
+});
+
+// ===== HOME BTN =====
+homeBtn?.addEventListener('click', () => {
+  readerLayout.classList.add('hidden');
+  document.getElementById('library').classList.remove('hidden');
+  readerOnlyEls.forEach(el => el.classList.add('hidden'));
+  infoBtn.classList.add('hidden');
+});
+
+// ===== MODALS =====
+function openModal(modal){ modal.style.display = 'flex'; }
+function closeModal(modal){ modal.style.display = 'none'; }
+
+infoBtn?.addEventListener('click', () => openModal(infoModal));
+shortcutsBtn?.addEventListener('click', () => openModal(shortcutsModal));
+settingsBtn?.addEventListener('click', () => openModal(settingsModal));
+creditsBtn?.addEventListener('click', () => openModal(creditsModal));
+
+closeModalButtons.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const target = e.target.dataset.target;
+    if (target) closeModal(document.getElementById(target));
+  });
+});
+
+window.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal')) {
+    e.target.style.display = 'none';
   }
-}
-
-function setFallbackBackground(src) {
-  document.body.style.background = `url('${src}') no-repeat center center fixed`;
-  document.body.style.backgroundSize = 'cover';
-}
-
-// (KEEP THE REST OF YOUR SCRIPT SAME — TOC, openBook, chapter nav, settings, etc.)
+});
