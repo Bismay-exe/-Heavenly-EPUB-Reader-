@@ -1,7 +1,7 @@
 // ===== CONFIG =====
 const CONFIG = {
   githubUser: 'Bismay-exe',
-  githubRepo: 'heavenly-epub-reader',
+  githubRepo: 'Heavenly-EPUB-Reader',   // exact repo name
   epubsFolder: 'epubs',
   coversFolder: 'covers',
   backgroundsFolder: 'backgrounds',
@@ -170,15 +170,27 @@ async function openBook(url, { cover } = {}){
   await loadTOC();
 }
 
-// ===== TOC LOADER =====
+// ===== TOC LOADER with fallback =====
 async function loadTOC() {
   try {
+    // First try proper navigation
     const navigation = await book.loaded.navigation;
     toc = navigation.toc;
+
+    // Fallback to spine if empty
+    if (!toc || !toc.length) {
+      const spine = await book.loaded.spine;
+      toc = spine.items.map((item, index) => ({
+        label: item.label || `Chapter ${index + 1}`,
+        href: item.href
+      }));
+    }
+
     if (!toc || !toc.length) {
       tocList.innerHTML = "<li><em>No chapters found.</em></li>";
       return;
     }
+
     renderTOC(toc);
     currentChapterIndex = 0;
   } catch (err) {
@@ -192,7 +204,7 @@ function renderTOC(items, parentEl = tocList) {
   items.forEach((item, index) => {
     const li = document.createElement("li");
     const a = document.createElement("a");
-    a.textContent = item.label.trim() || "Untitled Chapter";
+    a.textContent = item.label.trim() || `Chapter ${index + 1}`;
     a.href = "#";
     a.addEventListener("click", e => {
       e.preventDefault();
