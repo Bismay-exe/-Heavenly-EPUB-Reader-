@@ -6,7 +6,7 @@
   <title>✨ Heavenly EPUB Reader 📖</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="assets/placeholder.png" />
-  <!-- EPUB.js -->
+  <!-- EPUB.js CDN -->
   <script src="https://unpkg.com/epubjs/dist/epub.min.js"></script>
 </head>
 <body>
@@ -14,19 +14,46 @@
   <header class="glass">
     <h1>✨ Heavenly EPUB Reader 📖</h1>
     <div class="controls">
-      <button id="home-btn" title="Back to Library">🏠 Library</button>
+      <button id="home-btn">🏠 Library</button>
       <button id="settings-btn">⚙️ Settings</button>
       <button id="shortcuts-btn">⌨️ Shortcuts</button>
       <button id="info-btn" class="reader-only hidden">ℹ️ Info</button>
-      <!-- FIXED: Theme toggle moved outside hidden group -->
-      <button id="theme-toggle">🌙 Dark Mode</button>
-    </div>
 
-    <!-- Reader-only controls -->
-    <div class="reader-only hidden flex-row gap">
-      <button id="prev-ch" title="Previous Chapter">⟵ Prev</button>
-      <input id="chapter-search" type="search" placeholder="Search chapters..." />
-      <button id="next-ch" title="Next Chapter">Next ⟶</button>
+      <div class="reader-only hidden flex-row gap">
+        <button id="prev-ch">⟵ Prev</button>
+        <input id="chapter-search" type="search" placeholder="Search chapters..." />
+        <button id="next-ch">Next ⟶</button>
+      </div>
+
+      <div class="options reader-only hidden flex-row gap">
+        <select id="reading-mode">
+          <option value="scrolled" selected>Mode: Scrolling</option>
+          <option value="paginated">Mode: Paginated</option>
+        </select>
+
+        <select id="font-size">
+          <option value="90%">Font: S</option>
+          <option value="100%" selected>Font: M</option>
+          <option value="110%">Font: L</option>
+          <option value="125%">Font: XL</option>
+          <option value="140%">Font: XXL</option>
+        </select>
+
+        <label class="color-picker">
+          <span>Text</span>
+          <input id="text-color" type="color" value="#111111" />
+        </label>
+
+        <label class="color-picker">
+          <span>Background</span>
+          <select id="bg-style">
+            <option value="transparent" selected>Transparent</option>
+            <option value="black">Black</option>
+          </select>
+        </label>
+
+        <button id="theme-toggle">🌙 Dark Mode</button>
+      </div>
     </div>
   </header>
 
@@ -34,7 +61,7 @@
   <section id="library" class="glass">
     <div class="library-head">
       <h2>📚 Your Books</h2>
-      <p class="muted">Books are loaded from <code>/epubs</code> with covers in <code>/covers</code>.</p>
+      <p class="muted">Books are loaded from <code>/epubs</code> with covers in <code>/covers</code></p>
     </div>
     <div id="book-grid" class="grid"></div>
   </section>
@@ -42,8 +69,10 @@
   <!-- Reader -->
   <main id="reader-layout" class="hidden">
     <aside id="toc" class="glass">
-      <h3>Table of Contents</h3>
-      <input id="toc-filter" type="search" placeholder="Filter chapters..." />
+      <div class="toc-head">
+        <h3>Table of Contents</h3>
+        <input id="toc-filter" type="search" placeholder="Filter chapters..." />
+      </div>
       <ul id="toc-list"></ul>
     </aside>
     <section id="viewer-wrap" class="glass">
@@ -51,17 +80,23 @@
     </section>
   </main>
 
+  <!-- Background Gallery -->
+  <div id="bg-gallery" class="glass"></div>
+
   <!-- Credits -->
   <button id="credits-btn">💬 Contact / Credits</button>
   <div id="credits-modal" class="modal">
     <div class="modal-content glass">
       <span class="close-modal" data-target="credits-modal">&times;</span>
       <h2>Website Owner & Credits</h2>
-      <p>Website by <a href="https://github.com/Bismay-exe" target="_blank">Bismay-exe</a></p>
+      <p>Website by <a href="https://github.com/Bismay-exe" target="_blank">GitHub</a></p>
+      <p>Follow me on <a href="https://www.instagram.com/bismay.exe" target="_blank">Instagram</a> · 
+         <a href="https://t.me/bismay_exe" target="_blank">Telegram</a></p>
+      <p>Join my Telegram channel: <a href="https://t.me/BismaysInventory" target="_blank">Click here</a></p>
     </div>
   </div>
 
-  <!-- Info Modal -->
+  <!-- Book Info Modal -->
   <div id="info-modal" class="modal">
     <div class="modal-content glass">
       <span class="close-modal" data-target="info-modal">&times;</span>
@@ -75,9 +110,12 @@
     <div class="modal-content glass">
       <span class="close-modal" data-target="shortcuts-modal">&times;</span>
       <h2>Keyboard Shortcuts</h2>
-      <ul>
-        <li><kbd>←</kbd>/<kbd>→</kbd> Prev/Next Chapter</li>
-        <li><kbd>D</kbd> Toggle Dark/Light Mode</li>
+      <ul class="shortcut-list">
+        <li><kbd>←</kbd> / <kbd>→</kbd> : Prev / Next chapter</li>
+        <li><kbd>Ctrl</kbd> + <kbd>F</kbd> : Focus chapter search</li>
+        <li><kbd>D</kbd> : Toggle Dark/Light theme</li>
+        <li><kbd>M</kbd> : Toggle Reading Mode</li>
+        <li><kbd>+</kbd> / <kbd>-</kbd> : Font size up/down</li>
       </ul>
     </div>
   </div>
@@ -87,11 +125,16 @@
     <div class="modal-content glass">
       <span class="close-modal" data-target="settings-modal">&times;</span>
       <h2>⚙️ Settings</h2>
-      <p><em>More settings coming soon…</em></p>
+      <div class="settings-group">
+        <label><input type="checkbox" id="settings-theme"> Dark Theme by default</label>
+      </div>
     </div>
   </div>
 
-  <footer class="glass"><p>© 2025 Heavenly EPUB Reader</p></footer>
+  <footer class="glass">
+    <p>© 2025 Heavenly EPUB Reader</p>
+  </footer>
+
   <script src="script.js"></script>
 </body>
 </html>
