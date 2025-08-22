@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Heavenly EPUB Reader</title>
+  <title>✨ Heavenly EPUB Reader 📖</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="assets/placeholder.png" />
   <!-- EPUB.js CDN -->
-  <script src="https://unpkg.com/epubjs/dist/epub.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
 </head>
 <body>
   <!-- Header -->
@@ -52,44 +52,38 @@
           </select>
         </label>
 
-        <button id="theme-toggle">🌙 Dark Mode</button>
+        <button id="theme-toggle"></button>
       </div>
     </div>
   </header>
 
   <!-- Continue / Recently Read / Finished / Library -->
   <section id="continue" class="glass hidden">
-    <div class="library-head">
-      <h2>▶️ Continue Reading</h2>
-    </div>
+    <div class="library-head"><h2>▶️ Continue Reading</h2></div>
     <div id="continue-container"></div>
     <button id="finish-btn" class="finish-btn">✅ Mark as Finished</button>
   </section>
 
   <section id="recent" class="glass hidden">
-    <div class="library-head">
-      <h2>🕘 Recently Read</h2>
-    </div>
+    <div class="library-head"><h2>🕘 Recently Read</h2></div>
     <div id="recent-grid" class="grid"></div>
   </section>
 
   <section id="finished" class="glass hidden">
-    <div class="library-head">
-      <h2>🏁 Finished Books</h2>
-    </div>
+    <div class="library-head"><h2>🏁 Finished Books</h2></div>
     <div id="finished-grid" class="grid"></div>
   </section>
 
   <section id="library" class="glass">
     <div class="library-head">
       <h2>📚 Your Books</h2>
-      <p class="muted">Books are loaded from <code>/epubs</code> with covers in <code>/covers</code> (matching filenames).</p>
+      <p class="muted">Books are loaded from <code>/epubs</code> with covers in <code>/covers</code>.</p>
     </div>
     <div id="book-grid" class="grid"></div>
   </section>
 
+  <!-- Reader -->
   <main id="reader-layout" class="hidden">
-    <!-- TOC / Sidebar -->
     <aside id="toc" class="glass">
       <div class="toc-head">
         <h3>Table of Contents</h3>
@@ -97,14 +91,10 @@
       </div>
       <ul id="toc-list"></ul>
     </aside>
-
-    <!-- Viewer -->
-    <section id="viewer-wrap" class="glass">
-      <div id="viewer"></div>
-    </section>
+    <section id="viewer-wrap" class="glass"><div id="viewer"></div></section>
   </main>
 
-  <!-- Background Image Gallery -->
+  <!-- Background Gallery -->
   <div id="bg-gallery" class="glass"></div>
 
   <!-- Credits -->
@@ -114,12 +104,15 @@
       <span class="close-modal" data-target="credits-modal">&times;</span>
       <h2>Website Owner & Credits</h2>
       <p>Website by <a href="https://github.com/Bismay-exe" target="_blank">GitHub</a></p>
-      <p>Follow me on <a href="https://www.instagram.com/bismay.exe" target="_blank">Instagram</a> &middot; <a href="https://t.me/bismay_exe" target="_blank">Telegram</a></p>
-      <p>Join my Telegram channel: <a href="https://t.me/BismaysInventory" target="_blank">Click here</a></p>
+      <p>Follow me on 
+        <a href="https://www.instagram.com/bismay.exe" target="_blank">Instagram</a> · 
+        <a href="https://t.me/bismay_exe" target="_blank">Telegram</a>
+      </p>
+      <p>Join my channel: <a href="https://t.me/BismaysInventory" target="_blank">Click here</a></p>
     </div>
   </div>
 
-  <!-- Book Info Modal -->
+  <!-- Info Modal -->
   <div id="info-modal" class="modal">
     <div class="modal-content glass">
       <span class="close-modal" data-target="info-modal">&times;</span>
@@ -134,11 +127,11 @@
       <span class="close-modal" data-target="shortcuts-modal">&times;</span>
       <h2>Keyboard Shortcuts</h2>
       <ul class="shortcut-list">
-        <li><kbd>←</kbd> / <kbd>→</kbd> : Prev / Next chapter</li>
-        <li><kbd>Ctrl</kbd> + <kbd>F</kbd> : Focus chapter search</li>
-        <li><kbd>D</kbd> : Toggle Dark/Light theme</li>
-        <li><kbd>M</kbd> : Toggle Reading Mode</li>
-        <li><kbd>+</kbd> / <kbd>-</kbd> : Increase / Decrease font size</li>
+        <li><kbd>←</kbd>/<kbd>→</kbd> : Prev / Next chapter</li>
+        <li><kbd>Ctrl</kbd>+<kbd>F</kbd> : Search chapters</li>
+        <li><kbd>D</kbd> : Toggle Dark/Light</li>
+        <li><kbd>M</kbd> : Toggle Mode</li>
+        <li><kbd>+</kbd>/<kbd>-</kbd> : Font size</li>
       </ul>
     </div>
   </div>
@@ -178,9 +171,7 @@
     </div>
   </div>
 
-  <footer class="glass">
-    <p>© 2025 Heavenly EPUB Reader</p>
-  </footer>
+  <footer class="glass"><p>© 2025 Heavenly EPUB Reader</p></footer>
 
   <script src="script.js"></script>
   <script>
