@@ -1,12 +1,14 @@
-[
-  {
-    "title": "Reverend Insanity",
-    "file": "Reverend_Insanity.epub",
-    "cover": "Reverend_Insanity.jpg"
-  },
-  {
-    "title": "Lord of the Mysteries",
-    "file": "LordoftheMysteries.epub",
-    "cover": "LordoftheMysteries.jpg"
-  }
-]
+{
+  "books": [
+    {
+      "title": "Reverend Insanity",
+      "file": "Reverend_Insanity.epub",
+      "cover": "Reverend_Insanity.jpg"
+    },
+    {
+      "title": "Lord of the Mysteries",
+      "file": "LordoftheMysteries.epub",
+      "cover": "LordoftheMysteries.jpg"
+    }
+  ]
+}
