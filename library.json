@@ -1,17 +1,14 @@
 [
   {
-    "title": "Test Book",
-    "folder": "books/TestBook",
-    "cover": "cover.jpg"
-  },
-  {
+    "id": "Reverend_Insanity",
     "title": "Reverend Insanity",
-    "folder": "books/ReverendInsanity",
+    "path": "books/Reverend_Insanity",
     "cover": "cover.jpg"
   },
   {
-    "title": "Lord Of The Mysteries",
-    "folder": "books/LordOfTheMysteries",
+    "id": "Lord_of_the_Mysteries",
+    "title": "Lord of the Mysteries",
+    "path": "books/Lord_of_the_Mysteries",
     "cover": "cover.jpg"
   }
 ]
