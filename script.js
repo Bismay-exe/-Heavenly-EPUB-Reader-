@@ -1,7 +1,7 @@
 // ===== CONFIG =====
 const CONFIG = {
   githubUser: 'Bismay-exe',                 // your username
-  githubRepo: 'Heavenly-EPUB-Reader',       // URL-safe repo name
+  githubRepo: 'heavenly-epub-reader',       // URL-safe repo name
   epubsFolder: 'epubs',
   coversFolder: 'covers',
   backgroundsFolder: 'backgrounds',
@@ -157,7 +157,10 @@ async function loadLibrary(){
       <div class="title">${it.title || beautifyName(base)}</div>
     `;
     card.addEventListener('click', () => {
-      let url = it.path || `${CONFIG.epubsFolder}/${it.file}`;
+      let url = it.path;
+      if (!url) {
+        url = `${CONFIG.epubsFolder}/${it.file}`;
+      }
       if (!/^(http|https):\/\//i.test(url)){
         url = `https://raw.githubusercontent.com/${CONFIG.githubUser}/${CONFIG.githubRepo}/main/${url}`;
       }
@@ -169,4 +172,44 @@ async function loadLibrary(){
   }
 }
 
-// (the rest of your code remains the same, no changes needed)
+// ===== BACKGROUNDS =====
+const bgGallery = document.getElementById('bg-gallery');
+async function loadGithubBackgrounds() {
+  const user = CONFIG.githubUser;
+  const repo = CONFIG.githubRepo;
+  const folder = CONFIG.backgroundsFolder;
+  const fallbackBg = 'backgrounds/bg.jpg';
+  try {
+    const apiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${folder}`;
+    const res = await fetch(apiUrl);
+    if(!res.ok) throw new Error('GitHub API error');
+    const files = await res.json();
+    let loadedAny = false;
+    files.forEach(file => {
+      if(file.type === "file" && /\.(jpg|jpeg|png|webp)$/i.test(file.name)){
+        const img = document.createElement('img');
+        img.src = file.download_url;
+        img.className = 'bg-thumb';
+        img.alt = file.name;
+        img.addEventListener('click', () => {
+          document.body.style.background = `url('${img.src}') no-repeat center center fixed`;
+          document.body.style.backgroundSize = 'cover';
+          persist('bgImage', img.src);
+        });
+        bgGallery.appendChild(img);
+        loadedAny = true;
+      }
+    });
+    if(!loadedAny) setFallbackBackground(fallbackBg);
+  } catch (err) {
+    const savedBg = read('bgImage');
+    if (savedBg) setFallbackBackground(savedBg); else setFallbackBackground(fallbackBg);
+  }
+}
+
+function setFallbackBackground(src) {
+  document.body.style.background = `url('${src}') no-repeat center center fixed`;
+  document.body.style.backgroundSize = 'cover';
+}
+
+// (KEEP THE REST OF YOUR SCRIPT SAME — TOC, openBook, chapter nav, settings, etc.)
