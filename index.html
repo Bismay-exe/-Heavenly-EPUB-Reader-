@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>✨ Heavenly EPUB Reader 📖</title>
+  <title>Heavenly EPUB Reader</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="assets/placeholder.png" />
   <!-- EPUB.js CDN -->
@@ -14,19 +14,19 @@
   <header class="glass">
     <h1>✨ Heavenly EPUB Reader 📖</h1>
     <div class="controls">
-      <button id="home-btn">🏠 Library</button>
+      <button id="home-btn" title="Back to Library">🏠 Library</button>
       <button id="settings-btn">⚙️ Settings</button>
       <button id="shortcuts-btn">⌨️ Shortcuts</button>
       <button id="info-btn" class="reader-only hidden">ℹ️ Info</button>
 
       <div class="reader-only hidden flex-row gap">
-        <button id="prev-ch">⟵ Prev</button>
+        <button id="prev-ch" title="Previous Chapter">⟵ Prev</button>
         <input id="chapter-search" type="search" placeholder="Search chapters..." />
-        <button id="next-ch">Next ⟶</button>
+        <button id="next-ch" title="Next Chapter">Next ⟶</button>
       </div>
 
       <div class="options reader-only hidden flex-row gap">
-        <select id="reading-mode">
+        <select id="reading-mode" title="Reading mode">
           <option value="scrolled" selected>Mode: Scrolling</option>
           <option value="paginated">Mode: Paginated</option>
         </select>
@@ -61,12 +61,11 @@
   <section id="library" class="glass">
     <div class="library-head">
       <h2>📚 Your Books</h2>
-      <p class="muted">Books are loaded from <code>/epubs</code> with covers in <code>/covers</code></p>
+      <p class="muted">Books are loaded from <code>/epubs</code> with covers in <code>/covers</code> (matching filenames).</p>
     </div>
     <div id="book-grid" class="grid"></div>
   </section>
 
-  <!-- Reader -->
   <main id="reader-layout" class="hidden">
     <aside id="toc" class="glass">
       <div class="toc-head">
@@ -75,38 +74,34 @@
       </div>
       <ul id="toc-list"></ul>
     </aside>
+
     <section id="viewer-wrap" class="glass">
       <div id="viewer"></div>
     </section>
   </main>
 
-  <!-- Background Gallery -->
-  <div id="bg-gallery" class="glass"></div>
-
-  <!-- Credits -->
+  <!-- Floating Credits Button -->
   <button id="credits-btn">💬 Contact / Credits</button>
-  <div id="credits-modal" class="modal">
+
+  <!-- Credits Modal -->
+  <div id="credits-modal" class="modal hidden">
     <div class="modal-content glass">
       <span class="close-modal" data-target="credits-modal">&times;</span>
       <h2>Website Owner & Credits</h2>
-      <p>Website by <a href="https://github.com/Bismay-exe" target="_blank">GitHub</a></p>
-      <p>Follow me on <a href="https://www.instagram.com/bismay.exe" target="_blank">Instagram</a> · 
-         <a href="https://t.me/bismay_exe" target="_blank">Telegram</a></p>
-      <p>Join my Telegram channel: <a href="https://t.me/BismaysInventory" target="_blank">Click here</a></p>
-    </div>
-  </div>
-
-  <!-- Book Info Modal -->
-  <div id="info-modal" class="modal">
-    <div class="modal-content glass">
-      <span class="close-modal" data-target="info-modal">&times;</span>
-      <h2>Book Info</h2>
-      <div id="book-meta"><p><em>No metadata loaded.</em></p></div>
+      <p>Website by <a href="https://github.com/Bismay-exe" target="_blank">Bismay-exe</a></p>
+      <p>
+        Follow me on 
+        <a href="https://www.instagram.com/bismay.exe" target="_blank">Instagram</a> &middot;
+        <a href="https://t.me/bismay_exe" target="_blank">Telegram</a>
+      </p>
+      <p>Join my Telegram channel: 
+        <a href="https://t.me/BismaysInventory" target="_blank">Click here</a>
+      </p>
     </div>
   </div>
 
   <!-- Shortcuts Modal -->
-  <div id="shortcuts-modal" class="modal">
+  <div id="shortcuts-modal" class="modal hidden">
     <div class="modal-content glass">
       <span class="close-modal" data-target="shortcuts-modal">&times;</span>
       <h2>Keyboard Shortcuts</h2>
@@ -115,18 +110,37 @@
         <li><kbd>Ctrl</kbd> + <kbd>F</kbd> : Focus chapter search</li>
         <li><kbd>D</kbd> : Toggle Dark/Light theme</li>
         <li><kbd>M</kbd> : Toggle Reading Mode</li>
-        <li><kbd>+</kbd> / <kbd>-</kbd> : Font size up/down</li>
+        <li><kbd>+</kbd> / <kbd>-</kbd> : Increase / Decrease font size</li>
       </ul>
     </div>
   </div>
 
   <!-- Settings Modal -->
-  <div id="settings-modal" class="modal">
+  <div id="settings-modal" class="modal hidden">
     <div class="modal-content glass">
       <span class="close-modal" data-target="settings-modal">&times;</span>
       <h2>⚙️ Settings</h2>
       <div class="settings-group">
         <label><input type="checkbox" id="settings-theme"> Dark Theme by default</label>
+      </div>
+      <div class="settings-group">
+        <label>Default Reading Mode:
+          <select id="settings-reading-mode">
+            <option value="scrolled">Scrolling</option>
+            <option value="paginated">Paginated</option>
+          </select>
+        </label>
+      </div>
+      <div class="settings-group">
+        <label>Default Font Size:
+          <select id="settings-font-size">
+            <option value="90%">S</option>
+            <option value="100%" selected>M</option>
+            <option value="110%">L</option>
+            <option value="125%">XL</option>
+            <option value="140%">XXL</option>
+          </select>
+        </label>
       </div>
     </div>
   </div>
