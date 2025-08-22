@@ -1,7 +1,7 @@
 // ===== CONFIG =====
 const CONFIG = {
   githubUser: 'Bismay-exe',                 
-  githubRepo: 'heavenly-epub-reader',       
+  githubRepo: 'Heavenly-EPUB-Reader',       
   epubsFolder: 'epubs',
   coversFolder: 'covers',
   backgroundsFolder: 'backgrounds',
