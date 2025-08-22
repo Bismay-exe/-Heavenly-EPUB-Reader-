@@ -1,1 +1,12 @@
-{"books": []}
+[
+  {
+    "title": "Reverend Insanity",
+    "file": "Reverend_Insanity.epub",
+    "cover": "Reverend_Insanity.jpg"
+  },
+  {
+    "title": "Lord of the Insanity",
+    "file": "LordoftheMysteries.epub",
+    "cover": "LordoftheMysteries.jpg"
+  }
+]
