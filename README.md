@@ -1,3 +1,5 @@
+![Heavenly EPUB Reader Banner](assets/screenshots/banner.png)
+
 # ✨ Heavenly EPUB Reader 📖  
 
 [![GitHub stars](https://img.shields.io/github/stars/Bismay-exe/heavenly-epub-reader?style=for-the-badge&logo=github)](https://github.com/Bismay-exe/heavenly-epub-reader/stargazers)  
@@ -119,7 +121,8 @@ heavenly-epub-reader/
     ├── placeholder.png
     └── screenshots/
         ├── library.png
-        └── reader.png
+        ├── reader.png
+        └── banner.png
 ```
 
 ---
