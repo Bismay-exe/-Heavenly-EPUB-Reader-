@@ -139,23 +139,34 @@ async function loadTOC() {
     toc = navigation.toc;
 
     if (!toc || !toc.length) {
+      console.warn("No TOC found, falling back to spine.");
       const spine = await book.loaded.spine;
-      toc = spine.items.map((item, index) => ({
-        label: item.label || `Chapter ${index + 1}`,
+      toc = spine.items.map((item, i) => ({
+        label: item.label || `Chapter ${i + 1}`,
         href: item.href
       }));
     }
 
     if (!toc || !toc.length) {
-      tocList.innerHTML = "<li><em>No chapters found.</em></li>";
+      tocList.innerHTML = "<li><em>No chapters found in this EPUB.</em></li>";
       return;
     }
 
     renderTOC(toc);
     currentChapterIndex = 0;
+    console.log("Chapters loaded:", toc);
   } catch (err) {
     console.error("Error loading TOC:", err);
-    tocList.innerHTML = "<li><em>Failed to load TOC.</em></li>";
+    try {
+      const spine = await book.loaded.spine;
+      toc = spine.items.map((item, i) => ({
+        label: item.label || `Chapter ${i + 1}`,
+        href: item.href
+      }));
+      renderTOC(toc);
+    } catch (e) {
+      tocList.innerHTML = "<li><em>Failed to load chapters.</em></li>";
+    }
   }
 }
 
