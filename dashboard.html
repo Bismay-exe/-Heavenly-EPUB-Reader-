@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reader Dashboard - Heavenly EPUB Reader</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>📊 Reading Dashboard</h1>
+    <nav>
+      <a href="index.html">📖 Back to Reader</a>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+    <section class="card">
+      <h2>🔥 Daily Streak</h2>
+      <p id="dailyStreak">0 days</p>
+    </section>
+
+    <section class="card">
+      <h2>📅 Weekly Reading Time</h2>
+      <canvas id="readingChart" width="420" height="240"></canvas>
+    </section>
+
+    <section class="card">
+      <h2>📈 Summary</h2>
+      <p>Total Books: <span id="booksRead">0</span></p>
+      <p>Total Hours Spent: <span id="hoursSpent">0</span></p>
+      <p>Most Read Book: <span id="mostReadBook">—</span></p>
+    </section>
+
+    <section class="card">
+      <h2>📚 Books Stats</h2>
+      <table>
+        <thead>
+          <tr><th>Book</th><th>Pages Read</th><th>Total Pages</th><th>Progress</th><th>Time Spent</th></tr>
+        </thead>
+        <tbody id="booksTable"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/dashboard.js" defer></script>
+</body>
+</html>

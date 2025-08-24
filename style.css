@@ -1,0 +1,199 @@
+
+/* Heavenly EPUB Reader - Global Styles */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  background: #0b0b12;
+  color: #f5f6fb;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: linear-gradient(90deg, #6f2cff, #b642ff);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+}
+header h1 { margin: 0; font-size: 20px; }
+header nav a, header nav button {
+  color: white;
+  text-decoration: none;
+  margin-left: 10px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+header nav a:hover, header nav button:hover { background: rgba(255,255,255,0.3); }
+
+main { padding: 16px; }
+
+.hidden { display: none !important; }
+
+/* Bookshelf */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+}
+.book-card { text-align: center; cursor: pointer; }
+.book-cover { position: relative; display: inline-block; }
+.book-card img {
+  width: 110px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+}
+.book-card p { margin: 8px 0 2px; }
+.book-card small { display: block; color: #b8bbcf; }
+
+.remove-btn, .download-btn, .reimport-btn {
+  margin-top: 6px;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.remove-btn {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: rgba(255, 0, 0, 0.85);
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: none;
+}
+.book-cover:hover .remove-btn { display: block; }
+
+.download-btn { background: #22bb33; color: #fff; }
+.download-btn:hover { background: #199528; }
+.reimport-btn { background: #0088ff; color: #fff; }
+.reimport-btn:hover { background: #0066cc; }
+
+.missing-label {
+  position: absolute;
+  bottom: 6px; left: 6px;
+  background: #ffcc00;
+  color: black;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* Continue */
+#continueReading { margin: 10px 0 20px; text-align: center; }
+#continueReading button {
+  background: #7b2ff7;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+#continueReading button:hover { background: #5a1fc9; }
+
+/* Bookshelf actions */
+#bookshelfActions { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+#bookshelfActions button {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+#clearAllBtn { background: #ff4444; }
+#clearAllBtn:hover { background: #cc0000; }
+#downloadAllBtn { background: #0077cc; }
+#downloadAllBtn:hover { background: #005fa3; }
+#restoreZipBtn { background: #ffaa00; color: #222; }
+#restoreZipBtn:hover { background: #cc8800; color: #fff; }
+
+/* Reader container */
+#reader-container {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 75vh;
+  gap: 12px;
+}
+#viewer {
+  width: 100%;
+  min-height: 65vh;
+  border-radius: 12px;
+  background: #10121a;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+  overflow: hidden;
+}
+#controls { display: flex; gap: 10px; }
+#controls button {
+  background: #2d2f3b;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+#controls button:hover { background: #3a3d4c; }
+
+/* Overlay + settings & stats */
+.overlay.glass {
+  position: fixed; inset: 0;
+  background: rgba(11,11,18,0.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2000;
+}
+.overlay .overlay-content {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 18px;
+  border-radius: 14px;
+  width: 360px;
+}
+.floating-btn {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #7b2ff7;
+  color: white; border: none;
+  padding: 0.8rem 1rem;
+  border-radius: 50%;
+  font-size: 1.2rem; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 1500;
+}
+.floating-btn:hover { background: #a061ff; }
+
+/* Progress UI for backup/restore */
+#restoreProgress { width: 100%; background: #eee; border-radius: 10px; margin: 10px 0; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1); position: relative; padding: 10px; }
+#progressBar { height: 16px; width: 0%; background: linear-gradient(90deg, #4cafef, #0077cc); border-radius: 10px; transition: width 0.3s ease; }
+#progressText { font-size: 14px; margin-top: 8px; color: #ddd; text-align: center; }
+#pauseResumeBtn, #cancelProgress {
+  margin-top: 8px; padding: 6px 12px; border: none; border-radius: 6px; color: white; font-size: 14px; cursor: pointer; transition: background 0.2s;
+}
+#pauseResumeBtn { background: #ffaa00; color: #222; }
+#pauseResumeBtn:hover { background: #cc8800; color: #fff; }
+#cancelProgress { background: #ff4d4d; margin-left: 6px; }
+#cancelProgress:hover { background: #cc0000; }
+
+/* Dashboard */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.2rem;
+}
+.card {
+  padding: 1rem;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { padding: 0.6rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.12); }
