@@ -1,39 +1,565 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Heavenly EPUB Reader</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heavenly EPUB Reader</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c 0%, #2a5298 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            margin-right: 15px;
+        }
+        
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .upload-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 0 auto;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .upload-area {
+            border: 3px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .upload-text {
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .reader-section {
+            display: none;
+            padding: 30px;
+        }
+        
+        .reader-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .book-title {
+            font-size: 1.8rem;
+            color: #444;
+        }
+        
+        .reader-controls {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .control-btn {
+            background: #f1f3f5;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+            color: #555;
+        }
+        
+        .control-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .reader-content {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 40px;
+            min-height: 500px;
+            max-height: 70vh;
+            overflow-y: auto;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        
+        .reader-content h1 {
+            color: #667eea;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .reader-content h2 {
+            color: #764ba2;
+            margin: 20px 0 15px;
+        }
+        
+        .reader-content p {
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            margin-top: 25px;
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .library-section {
+            padding: 30px;
+            display: none;
+        }
+        
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .book-cover {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        .book-info {
+            padding: 15px;
+        }
+        
+        .book-info h3 {
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            color: #444;
+        }
+        
+        .book-info p {
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: white;
+            margin-top: 30px;
+        }
+        
+        .footer a {
+            color: #ffd43b;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .reader-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .reader-controls {
+                align-self: flex-end;
+            }
+            
+            .library-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Heavenly EPUB Reader</h1>
-    <nav>
-      <button id="prevBtn" aria-label="Previous chapter">◀</button>
-      <select id="chapterSelect" aria-label="Select chapter"></select>
-      <button id="nextBtn" aria-label="Next chapter">▶</button>
-    </nav>
-  </header>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <h1>Heavenly EPUB Reader</h1>
+            </div>
+            <p class="tagline">Your divine reading experience</p>
+            
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p class="upload-text">Drag & drop your EPUB file here</p>
+                    <p class="upload-text">or</p>
+                    <button class="btn" id="browseBtn">Browse Files</button>
+                    <input type="file" id="fileInput" accept=".epub" style="display: none;">
+                </div>
+            </div>
+        </header>
+        
+        <div class="reader-section" id="readerSection">
+            <div class="reader-header">
+                <h2 class="book-title" id="bookTitle">Book Title</h2>
+                <div class="reader-controls">
+                    <button class="control-btn" id="prevBtn" title="Previous page">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="control-btn" id="nextBtn" title="Next page">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="control-btn" id="fontIncreaseBtn" title="Increase font size">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="control-btn" id="fontDecreaseBtn" title="Decrease font size">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="control-btn" id="libraryBtn" title="View library">
+                        <i class="fas fa-book"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="reader-content" id="readerContent">
+                <p>Your book content will appear here after upload.</p>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+        </div>
+        
+        <div class="library-section" id="librarySection">
+            <div class="library-header">
+                <h2>Your Library</h2>
+                <button class="btn" id="backToReaderBtn">Back to Reader</button>
+            </div>
+            
+            <div class="library-grid" id="libraryGrid">
+                <!-- Books will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Heavenly EPUB Reader &copy; 2023 | For your GitHub repository</p>
+        <p>This is a client-side demo. In a real application, EPUB parsing would require a backend service.</p>
+    </div>
 
-  <main>
-    <aside>
-      <h2 class="aside-title">Library</h2>
-      <ul id="bookList" aria-label="Books"></ul>
-    </aside>
-    <section id="reader">
-      <div id="coverWrap">
-        <img id="cover" alt="Book cover" />
-        <h2 id="bookTitle"></h2>
-      </div>
-      <iframe id="chapterFrame" title="Chapter content" sandbox=""></iframe>
-    </section>
-  </main>
-
-  <footer>
-    <p>Drop your book folders into <code>books/</code>. Chapters must be <code>.xhtml</code>. Each book needs a <code>chapters.json</code> (use tools to generate).</p>
-  </footer>
-
-  <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const uploadArea = document.getElementById('uploadArea');
+            const browseBtn = document.getElementById('browseBtn');
+            const fileInput = document.getElementById('fileInput');
+            const readerSection = document.getElementById('readerSection');
+            const librarySection = document.getElementById('librarySection');
+            const readerContent = document.getElementById('readerContent');
+            const bookTitle = document.getElementById('bookTitle');
+            const progressBar = document.getElementById('progressBar');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const fontIncreaseBtn = document.getElementById('fontIncreaseBtn');
+            const fontDecreaseBtn = document.getElementById('fontDecreaseBtn');
+            const libraryBtn = document.getElementById('libraryBtn');
+            const backToReaderBtn = document.getElementById('backToReaderBtn');
+            const libraryGrid = document.getElementById('libraryGrid');
+            
+            // Event listeners
+            browseBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileUpload);
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.8)';
+                uploadArea.style.background = 'rgba(255, 255, 255, 0.15)';
+            });
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                uploadArea.style.background = 'transparent';
+            });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                uploadArea.style.background = 'transparent';
+                
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileUpload();
+                }
+            });
+            
+            libraryBtn.addEventListener('click', () => {
+                readerSection.style.display = 'none';
+                librarySection.style.display = 'block';
+                loadLocalEPUBs();
+            });
+            
+            backToReaderBtn.addEventListener('click', () => {
+                librarySection.style.display = 'none';
+                readerSection.style.display = 'block';
+            });
+            
+            fontIncreaseBtn.addEventListener('click', () => {
+                const currentSize = parseInt(getComputedStyle(readerContent).fontSize);
+                readerContent.style.fontSize = (currentSize + 2) + 'px';
+            });
+            
+            fontDecreaseBtn.addEventListener('click', () => {
+                const currentSize = parseInt(getComputedStyle(readerContent).fontSize);
+                if (currentSize > 14) {
+                    readerContent.style.fontSize = (currentSize - 2) + 'px';
+                }
+            });
+            
+            // Function to load EPUBs from the epubs folder
+            function loadLocalEPUBs() {
+                libraryGrid.innerHTML = '';
+                
+                // In a real implementation, you would fetch from your epubs folder
+                // This is a simulation since we can't directly access the file system
+                
+                const sampleEPUBs = [
+                    { title: "Sample Book 1", author: "Author One", filename: "book1.epub" },
+                    { title: "Sample Book 2", author: "Author Two", filename: "book2.epub" },
+                    { title: "Great Novel", author: "Famous Writer", filename: "novel.epub" },
+                    { title: "Science Compendium", author: "Dr. Researcher", filename: "science.epub" }
+                ];
+                
+                sampleEPUBs.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.className = 'book-card';
+                    bookCard.innerHTML = `
+                        <div class="book-cover">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="book-info">
+                            <h3>${book.title}</h3>
+                            <p>Author: ${book.author}</p>
+                            <p>File: ${book.filename}</p>
+                        </div>
+                    `;
+                    
+                    bookCard.addEventListener('click', () => {
+                        // In a real implementation, this would load the EPUB from your epubs folder
+                        simulateEPUBLoad(book.title, book.filename);
+                    });
+                    
+                    libraryGrid.appendChild(bookCard);
+                });
+            }
+            
+            // Simulate EPUB parsing (in a real app, you would use a library like JSZip and EPUB.js)
+            function handleFileUpload() {
+                if (fileInput.files.length === 0) return;
+                
+                const file = fileInput.files[0];
+                if (!file.name.endsWith('.epub')) {
+                    alert('Please upload an EPUB file');
+                    return;
+                }
+                
+                // Show loading state
+                readerContent.innerHTML = '<div style="text-align: center; padding: 50px;"><i class="fas fa-spinner fa-spin fa-3x"></i><p>Loading your book...</p></div>';
+                readerSection.style.display = 'block';
+                
+                // Simulate file processing
+                setTimeout(() => {
+                    // In a real application, you would parse the EPUB file here
+                    // This is a simulation with sample content
+                    const fileName = file.name.replace('.epub', '');
+                    bookTitle.textContent = fileName;
+                    
+                    // Sample book content
+                    readerContent.innerHTML = `
+                        <h1>${fileName}</h1>
+                        <h2>Chapter 1: The Beginning</h2>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nunc eget nisl. Nullam euismod, nisl eget ultricies ultricies, nunc nisl aliquam nunc, eget aliquam nisl nunc eget nisl.</p>
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                        <h2>Chapter 2: The Journey</h2>
+                        <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+                        <p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+                    `;
+                    
+                    // Update progress bar
+                    progressBar.style.width = '35%';
+                }, 1500);
+            }
+            
+            function simulateEPUBLoad(title, filename) {
+                // Show loading state
+                readerContent.innerHTML = '<div style="text-align: center; padding: 50px;"><i class="fas fa-spinner fa-spin fa-3x"></i><p>Loading your book...</p></div>';
+                readerSection.style.display = 'block';
+                librarySection.style.display = 'none';
+                
+                // Simulate loading from epubs folder
+                setTimeout(() => {
+                    bookTitle.textContent = title;
+                    
+                    // Sample book content
+                    readerContent.innerHTML = `
+                        <h1>${title}</h1>
+                        <p><strong>Loaded from: epubs/${filename}</strong></p>
+                        <h2>Chapter 1: The Beginning</h2>
+                        <p>This is a simulation of loading an EPUB file from your epubs folder. In a real implementation, the EPUB file would be fetched and parsed.</p>
+                        <p>For a complete solution, you would need to:</p>
+                        <ol>
+                            <li>Host this HTML file on GitHub Pages</li>
+                            <li>Add your EPUB files to an 'epubs' folder in your repository</li>
+                            <li>Use a JavaScript EPUB library like EPUB.js</li>
+                            <li>Implement fetching and parsing of the EPUB files</li>
+                        </ol>
+                        <h2>Chapter 2: Implementation</h2>
+                        <p>To implement actual EPUB reading functionality, you would need to:</p>
+                        <ul>
+                            <li>Use the Fetch API to get the EPUB files from your GitHub repository</li>
+                            <li>Integrate with a library like EPUB.js to parse and display the content</li>
+                            <li>Handle navigation between chapters</li>
+                            <li>Implement bookmarks and progress tracking</li>
+                        </ul>
+                    `;
+                    
+                    // Update progress bar
+                    progressBar.style.width = '25%';
+                }, 1500);
+            }
+            
+            // Initialize with some sample books in the library
+            const sampleBooks = [
+                { title: "Sample Book 1", author: "Author Name" },
+                { title: "Science Compendium", author: "Dr. Researcher" },
+                { title: "History of Everything", author: "Professor Time" },
+                { title: "Programming Basics", author: "Coder Dev" }
+            ];
+            
+            sampleBooks.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                bookCard.innerHTML = `
+                    <div class="book-cover">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="book-info">
+                        <h3>${book.title}</h3>
+                        <p>Author: ${book.author}</p>
+                    </div>
+                `;
+                libraryGrid.appendChild(bookCard);
+            });
+        });
+    </script>
 </body>
 </html>
